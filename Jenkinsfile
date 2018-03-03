@@ -5,10 +5,9 @@ pipeline {
 
     stages {
         stage('Test') {
-            sh manage.py test
-        }
-        stage('Deploy') {
-            echo "Deploying somewhere..."
+            steps {
+                sh 'manage.py test'
+            }
         }
     }
 }
