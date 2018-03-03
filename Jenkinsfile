@@ -5,7 +5,7 @@ pipeline {
 
     stages {
         stage('Test') {
-            python manage.py test
+            sh manage.py test
         }
         stage('Deploy') {
             echo "Deploying somewhere..."
