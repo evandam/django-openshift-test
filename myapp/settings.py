@@ -79,7 +79,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRESQL_DATABASE'),
         'USER': os.getenv('POSTGRESQL_USER'),
         'PASSWORD': os.getenv('POSTGRESQL_PASSWORD'),
-        'HOST': 'localhost',
+        'HOST': 'postgresql-94-centos7',
         'PORT': 5432
     }
 }
