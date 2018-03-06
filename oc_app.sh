@@ -1,5 +1,17 @@
 #!/bin/sh
 
-# Create the app in OpenShift
-oc new-app https://github.com/evandam/django-openshift-test
-oc expose svc django-openshift-test
+oc delete all -l app=myapp
+
+oc new-app \
+    -l app=myapp \
+    -e MYSQL_USER='user' \
+    -e MYSQL_PASSWORD='password' \
+    -e MYSQL_DATABASE='db' \
+    -e MYSQL_ROOT_PASSWORD='root' \
+    mysql \
+    rabbitmq \
+    https://github.com/evandam/django-openshift-test \
+
+oc expose svc/django-openshift-test
+
+
