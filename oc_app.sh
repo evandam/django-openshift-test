@@ -4,11 +4,11 @@ oc delete all -l app=myapp
 
 oc new-app \
     -l app=myapp \
-    -e MYSQL_USER='user' \
-    -e MYSQL_PASSWORD='password' \
-    -e MYSQL_DATABASE='db' \
-    -e MYSQL_ROOT_PASSWORD='root' \
-    library/mysql \
+    -e POSTGRESQL_USER='user' \
+    -e POSTGRESQL_PASSWORD='password' \
+    -e POSTGRESQL_DATABASE='db' \
+    -e POSTGRESQL_ROOT_PASSWORD='root' \
+    centos/postgresql-94-centos7 \
     library/rabbitmq \
     python~https://github.com/evandam/django-openshift-test \
 
