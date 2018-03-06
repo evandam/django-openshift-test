@@ -8,8 +8,8 @@ oc new-app \
     -e MYSQL_PASSWORD='password' \
     -e MYSQL_DATABASE='db' \
     -e MYSQL_ROOT_PASSWORD='root' \
-    mysql \
-    rabbitmq \
+    library/mysql \
+    library/rabbitmq \
     https://github.com/evandam/django-openshift-test \
 
 oc expose svc/django-openshift-test
