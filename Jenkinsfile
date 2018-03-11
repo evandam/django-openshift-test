@@ -1,5 +1,5 @@
 pipeline {
-    agent 'jenkins-slave-miniconda'
+    agent { label 'jenkins-slave-miniconda' }
 
     environment {
         VENV_BIN="$WORKSPACE/venv/bin"
