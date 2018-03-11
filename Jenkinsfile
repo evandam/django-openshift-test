@@ -46,7 +46,16 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                sh 'echo "publish reports here..."'
+                step([
+                    $class: 'WarningsPublisher',
+                    parserConfigurations: [
+                        [parserName: 'PyLint', pattern: 'reports/pylint.report']
+                    ],
+                ])
+                step([
+                    $class: 'CoberturaPublisher',
+                    coberturaReportFile: 'reports/coverage.xml'
+                ])
             }
         }
     }
