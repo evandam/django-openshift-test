@@ -62,7 +62,8 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                zip zipFile: 'app.zip', archive: true, glob: '!(**/*.pyc), !(**/__pycache__), !(venv), !(reports)'
+                sh 'zip -r app.zip . -x '*.pyc' -x '__pycache__' -x 'venv' -x 'reports' -x '*.log'
+                archiveArtifacts artifacts: 'app.zip'
             }
         }
     }
