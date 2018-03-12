@@ -6,6 +6,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                zip zipFile: 'app.zip'
                 sh 'conda create -p venv -q -y python=$PYTHON_VERSION pylint coverage'
                 sh 'venv/bin/pip install -q -r requirements.txt'
                 sh 'mkdir reports'
@@ -60,14 +61,11 @@ pipeline {
                 }
             }
         }
-        stage('Publish') {
-            steps {
-                sh 'zip -r app.zip . -x "*.pyc" -x "__pycache__" -x "venv" -x "reports" -x "*.log"'
-                archiveArtifacts artifacts: 'app.zip'
-            }
-        }
     }
     post {
+        success {
+            archiveArtifacts artifacts: 'app.zip'
+        }
         always {
             deleteDir()
         }
