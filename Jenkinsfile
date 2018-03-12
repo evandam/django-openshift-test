@@ -62,7 +62,7 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                sh 'zip -r app.zip . -x '*.pyc' -x '__pycache__' -x 'venv' -x 'reports' -x '*.log'
+                sh 'zip -r app.zip . -x "*.pyc" -x "__pycache__" -x "venv" -x "reports" -x "*.log"'
                 archiveArtifacts artifacts: 'app.zip'
             }
         }
