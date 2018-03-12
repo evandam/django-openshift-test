@@ -14,7 +14,7 @@ pipeline {
         stage('Lint') {
             steps {
                 sh '''#!/bin/bash
-                    pyfiles=$(find . -name "*.py" -not -path "venv/*")
+                    pyfiles=$(find . -name "*.py" -not -path "./venv/*")
                     if "venv/bin/pylint" -f parseable $pyfiles > "reports/pylint.report"
                     then
                         echo "No errors in pylint!"
