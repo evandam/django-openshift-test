@@ -42,19 +42,19 @@ pipeline {
                 sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
             }
         }
-        stage('Publish') {
-            steps {
-                step([
-                    $class: 'WarningsPublisher',
-                    parserConfigurations: [
-                        [parserName: 'PyLint', pattern: 'reports/pylint.report']
-                    ],
-                ])
-                step([
-                    $class: 'CoberturaPublisher',
-                    coberturaReportFile: 'reports/coverage.xml'
-                ])
-            }
+    }
+    post {
+        always {
+            step([
+                $class: 'WarningsPublisher',
+                parserConfigurations: [
+                    [parserName: 'PyLint', pattern: 'reports/pylint.report']
+                ],
+            ])
+            step([
+                $class: 'CoberturaPublisher',
+                coberturaReportFile: 'reports/coverage.xml'
+            ])
         }
     }
 }
