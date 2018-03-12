@@ -41,6 +41,11 @@ pipeline {
                 sh 'venv/bin/coverage run --omit "venv/*" $TEST_COMMAND'
             }
         }
+        stage('Publish') {
+            steps {
+                zip zipFile: 'app.zip' archive: true
+            }
+        }
     }
     post {
         always {
@@ -56,6 +61,8 @@ pipeline {
                 $class: 'CoberturaPublisher',
                 coberturaReportFile: 'reports/coverage.xml'
             ])
+
+            deleteDir()
         }
     }
 }
