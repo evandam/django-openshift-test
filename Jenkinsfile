@@ -38,8 +38,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'venv/bin/coverage run --omit "venv/*" $TEST_COMMAND || true'
-                sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
+                sh 'venv/bin/coverage run --omit "venv/*" $TEST_COMMAND'
             }
         }
     }
@@ -51,6 +50,8 @@ pipeline {
                     [parserName: 'PyLint', pattern: 'reports/pylint.report']
                 ],
             ])
+            
+            sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
             step([
                 $class: 'CoberturaPublisher',
                 coberturaReportFile: 'reports/coverage.xml'
