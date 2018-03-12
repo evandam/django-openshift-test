@@ -3,13 +3,7 @@ Testing building and deploying an application through Jenkins and OpenShift
 
 [Cobertura](https://wiki.jenkins.io/display/JENKINS/Cobertura+Plugin) and [Warnings](https://wiki.jenkins.io/display/JENKINS/Warnings+Plugin) plugins are used to publish the reports. These must be installed on your Jenkins instance.
 
-# Jenkins Miniconda Slave
-[evandam/jenkins-slave-miniconda](https://github.com/evandam/jenkins-slave-miniconda) is used, since I am running Jenkins through Openshift. This is a custom slave that is loaded with [Miniconda](https://conda.io/miniconda.html) through Docker. It can be deployed to Openshift with the following, assuming you have a project named `ci`:
-```bash
-$ oc project ci
-$ oc new-app https://github.com/evandam/jenkins-slave-miniconda -l role=jenkins-slave
-```
-Restart your Jenkins instance for Openshift to recognize the new template. Your jobs in Jenkins should require then require the `jenkins-slave-miniconda` label.
+[evandam/jenkins-slave-miniconda](https://github.com/evandam/jenkins-slave-miniconda) is used to provision build agents and run `conda` in them. Visit that repo for install instructions.
 
 # Environment Variables
 Projects in Jenkins should be parameterized, with two variables:
