@@ -1,23 +1,26 @@
 pipeline {
-    agent { label 'jenkins-slave-miniconda' }
+    agent { 
+        label 'jenkins-slave-miniconda'
+    }
 
     environment {
-        VENV_BIN="$WORKSPACE/venv/bin"
+        VENV="$WORKSPACE/VENV"
+        REPORTS="$WORKSPACE/reports"
     }
 
     stages {
         stage('Build') {
             steps {
-                sh 'conda create -p "$WORKSPACE/venv" -y python=$PYTHON_VERSION pylint coverage'
-                sh '"$VENV_BIN/pip" install -r requirements.txt'
+                sh 'conda create -p "$VENV" -q -y python=$PYTHON_VERSION pylint coverage'
+                sh '"$VENV/bin/pip" install -q -r requirements.txt'
+                sh 'mkdir "$REPORTS"'
             }
         }
         stage('Lint') {
             steps {
-                sh 'mkdir "$WORKSPACE/reports"'
-                sh '''#!/bin/bash -e
-                    pyfiles=$(find "$WORKSPACE" -name "*.py" -not -path "$WORKSPACE/venv/*")
-                    if "$VENV_BIN/pylint" -f parseable $pyfiles > "$WORKSPACE/reports/pylint.report"
+                sh '''#!/bin/bash
+                    pyfiles=$(find "$WORKSPACE" -name "*.py" -not -path "$VENV/*")
+                    if "$VENV/bin/pylint" -f parseable $pyfiles > "$REPORTS/pylint.report"
                     then
                         echo "No errors in pylint!"
                     else
@@ -40,8 +43,8 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh '"$VENV_BIN/coverage" run --omit "$WORKSPACE/venv/*" $TEST_COMMAND || true'
-                sh '"$VENV_BIN/coverage" xml -o "$WORKSPACE/reports/coverage.xml"'
+                sh '"$VENV/bin/coverage" run --omit "$VENV/*" $TEST_COMMAND || true'
+                sh '"$VENV/bin/coverage" xml -o "$REPORTS/coverage.xml"'
             }
         }
         stage('Publish') {
@@ -49,12 +52,12 @@ pipeline {
                 step([
                     $class: 'WarningsPublisher',
                     parserConfigurations: [
-                        [parserName: 'PyLint', pattern: 'reports/pylint.report']
+                        [parserName: 'PyLint', pattern: '$REPORTS/pylint.report']
                     ],
                 ])
                 step([
                     $class: 'CoberturaPublisher',
-                    coberturaReportFile: 'reports/coverage.xml'
+                    coberturaReportFile: '$REPORTS/coverage.xml'
                 ])
             }
         }
