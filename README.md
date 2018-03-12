@@ -1,30 +1,35 @@
 # django-openshift-test
 Testing building and deploying an application through Jenkins and OpenShift
 
-# Jenkins
 [Cobertura](https://wiki.jenkins.io/display/JENKINS/Cobertura+Plugin) and [Warnings](https://wiki.jenkins.io/display/JENKINS/Warnings+Plugin) plugins are used to publish the reports. These must be installed on your Jenkins instance.
 
-[evandam/jenkins-slave-miniconda](https://github.com/evandam/jenkins-slave-miniconda) is used, since I am personally running Jenkins through Openshift. This is a custom Jenkins slave that is loaded with [Miniconda](https://conda.io/miniconda.html). It can be deployed to Openshift with the following, assuming you have a project named `ci`:
+# Jenkins Miniconda Slave
+[evandam/jenkins-slave-miniconda](https://github.com/evandam/jenkins-slave-miniconda) is used, since I am running Jenkins through Openshift. This is a custom slave that is loaded with [Miniconda](https://conda.io/miniconda.html) through Docker. It can be deployed to Openshift with the following, assuming you have a project named `ci`:
 ```bash
 $ oc project ci
 $ oc new-app https://github.com/evandam/jenkins-slave-miniconda -l role=jenkins-slave
 ```
-Restart your Jenkins instance for Openshift to recognize the new template.
+Restart your Jenkins instance for Openshift to recognize the new template. Your jobs in Jenkins should require then require the `jenkins-slave-miniconda` label.
 
-## Freestyle Project
-### General
-- This project is parameterized
-  - `PYTHON_VERSION`: Default value `3.6`, `2.7`, etc.
-  - `TEST_COMMAND`: Default value `manage.py test`, `nosetest`, `nose2`, etc.
-- Restrict where this project can be run
-  - `jenkins-slave-miniconda` if using Openshift as mentioned above. Can be any agent with `conda` available.
+# Environment Variables
+Projects in Jenkins should be parameterized, with two variables:
+- `PYTHON_VERSION` is used to set the version of Python to build and test with. It is installed via Anaconda and should typically be something like `2.7`, `3.5`, `3.6`, etc.
+- `TEST_COMMAND` is the command used to run tests. For Django apps, it might be `manage.py test`, but other cases might include `nosetests`, `nose2`, `test.py`, etc.
 
-### Source Code Management
-- Git: `https://github.com/evandam/django-openshift-test`
+# Pipeline Project
+A `Jenkinsfile` is included that does the following:
+1. Build a virtual environment and install dependencies.
+2. Run Pylint on all `.py` files in the repository.
+3. Run tests as defined in `$TEST_COMMAND`.
+4. Publish pylint and code coverage reports.
+
+Simply create a new Jenkins pipeline project and point to this repo for it to run!
+
+# Freestyle Project
+Setup the usual stuff to point to this Git repo and enable parameters. Then add the following:
 
 ### Build
 - Execute shell: `./build.sh`
-- TODO: Build + Deploy Openshift project
 
 ### Post-build Actions
 - Scan for compiler warnings
@@ -34,3 +39,5 @@ Restart your Jenkins instance for Openshift to recognize the new template.
 - Publish Cobertura Coverage Report
   - Cobertura xml report pattern: `reports/coverage.xml`
   
+# TODO
+- Build and deploy to an Openshift project/application
