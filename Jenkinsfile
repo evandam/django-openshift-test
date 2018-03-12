@@ -35,10 +35,27 @@ pipeline {
                     fi
                 '''
             }
+            post {
+                always {
+                    step([
+                        $class: 'WarningsPublisher',
+                        parserConfigurations: [
+                            [parserName: 'PyLint', pattern: 'reports/pylint.report']
+                        ],
+                    ])
+                }
+            }
         }
         stage('Test') {
             steps {
                 sh 'venv/bin/coverage run --omit "venv/*" $TEST_COMMAND'
+            }
+            always {
+                sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
+                step([
+                    $class: 'CoberturaPublisher',
+                    coberturaReportFile: 'reports/coverage.xml'
+                ])
             }
         }
         stage('Publish') {
@@ -49,19 +66,6 @@ pipeline {
     }
     post {
         always {
-            step([
-                $class: 'WarningsPublisher',
-                parserConfigurations: [
-                    [parserName: 'PyLint', pattern: 'reports/pylint.report']
-                ],
-            ])
-            
-            sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
-            step([
-                $class: 'CoberturaPublisher',
-                coberturaReportFile: 'reports/coverage.xml'
-            ])
-
             deleteDir()
         }
     }
