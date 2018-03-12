@@ -71,7 +71,7 @@ pipeline {
             deleteDir()
         }
         success {
-            archiveArtifacts exclude: '*.pyc __pycache__ venv reports'
+            archiveArtifacts excludes: ['**/*.pyc', '**/__pycache__', 'venv', 'reports']
         }
     }
 }
