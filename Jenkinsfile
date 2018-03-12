@@ -63,10 +63,8 @@ pipeline {
         }
     }
     post {
-        success {
-            archiveArtifacts artifacts: 'build/app.zip', fingerprint: true
-        }
         always {
+            archiveArtifacts artifacts: 'build/app.zip', fingerprint: true
             deleteDir()
         }
     }
