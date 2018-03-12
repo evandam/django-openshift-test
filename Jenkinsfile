@@ -11,24 +11,24 @@ pipeline {
                 sh 'mkdir reports'
             }
         }
-        stage('Lint') {
+        stage('Pylint') {
             steps {
                 sh '''#!/bin/bash
                     pyfiles=$(find . -name "*.py" -not -path "./venv/*")
-                    if "venv/bin/pylint" -f parseable $pyfiles > "reports/pylint.report"
+                    if venv/bin/pylint -f parseable $pyfiles > "reports/pylint.report"
                     then
                         echo "No errors in pylint!"
                     else
-                        # Pylint exit codes are bit-encoded. We need to do some fun bitwise ANDs.
-                        exitcode=$?
-                        if [ $(( $exitcode & 3 )) -ne 0 ]
+                        # Pylint exit codes are bit-encoded. Bits 1 and 2 indicate errors.
+                        status=$?
+                        if [ $(( $status & 3 )) -ne 0 ]
                         then
                             echo "Error detected by pylint!"
-                            exit $exitcode
-                        elif [ $exitcode -eq 32 ]
+                            exit $status
+                        elif [ $status -eq 32 ]
                         then
                             echo "Pylint usage error!"
-                            exit $exitcode
+                            exit $status
                         else
                             echo "Warnings detected in pylint, but not failing the build."
                         fi
