@@ -62,16 +62,13 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                zip zipFile: 'app.zip', archive: true
+                zip zipFile: 'app.zip', archive: true, glob: '!**/*.pyc, !**/__pycache__, !venv, !reports'
             }
         }
     }
     post {
         always {
             deleteDir()
-        }
-        success {
-            zip zipFile: 'app.zip' archive: true, glob: '!**/*.pyc, !**/__pycache__, !venv, !reports'
         }
     }
 }
