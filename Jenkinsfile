@@ -50,12 +50,14 @@ pipeline {
             steps {
                 sh 'venv/bin/coverage run --omit "venv/*" $TEST_COMMAND'
             }
-            always {
-                sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
-                step([
-                    $class: 'CoberturaPublisher',
-                    coberturaReportFile: 'reports/coverage.xml'
-                ])
+            post {
+                always {
+                    sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
+                    step([
+                        $class: 'CoberturaPublisher',
+                        coberturaReportFile: 'reports/coverage.xml'
+                    ])
+                }
             }
         }
         stage('Publish') {
