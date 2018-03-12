@@ -43,7 +43,7 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                zip zipFile: 'app.zip' archive: true
+                zip zipFile: 'app.zip', archive: true
             }
         }
     }
