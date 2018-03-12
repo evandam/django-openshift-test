@@ -71,7 +71,7 @@ pipeline {
             deleteDir()
         }
         success {
-            archiveArtifacts excludes: ['**/*.pyc', '**/__pycache__', 'venv', 'reports']
+            zip zipFile: 'app.zip' archive: true, glob: '!**/*.pyc, !**/__pycache__, !venv, !reports'
         }
     }
 }
