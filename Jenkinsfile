@@ -3,24 +3,19 @@ pipeline {
         label 'jenkins-slave-miniconda'
     }
 
-    environment {
-        VENV="$WORKSPACE/VENV"
-        REPORTS="$WORKSPACE/reports"
-    }
-
     stages {
         stage('Build') {
             steps {
-                sh 'conda create -p "$VENV" -q -y python=$PYTHON_VERSION pylint coverage'
-                sh '"$VENV/bin/pip" install -q -r requirements.txt'
-                sh 'mkdir "$REPORTS"'
+                sh 'conda create -p venv -q -y python=$PYTHON_VERSION pylint coverage'
+                sh 'venv/bin/pip install -q -r requirements.txt'
+                sh 'mkdir reports'
             }
         }
         stage('Lint') {
             steps {
                 sh '''#!/bin/bash
-                    pyfiles=$(find "$WORKSPACE" -name "*.py" -not -path "$VENV/*")
-                    if "$VENV/bin/pylint" -f parseable $pyfiles > "$REPORTS/pylint.report"
+                    pyfiles=$(find . -name "*.py" -not -path "venv/*")
+                    if "venv/bin/pylint" -f parseable $pyfiles > "reports/pylint.report"
                     then
                         echo "No errors in pylint!"
                     else
@@ -43,8 +38,8 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh '"$VENV/bin/coverage" run --omit "$VENV/*" $TEST_COMMAND || true'
-                sh '"$VENV/bin/coverage" xml -o "$REPORTS/coverage.xml"'
+                sh 'venv/bin/coverage run --omit "venv/*" $TEST_COMMAND || true'
+                sh 'venv/bin/coverage xml -o "reports/coverage.xml"'
             }
         }
         stage('Publish') {
@@ -52,12 +47,12 @@ pipeline {
                 step([
                     $class: 'WarningsPublisher',
                     parserConfigurations: [
-                        [parserName: 'PyLint', pattern: '$REPORTS/pylint.report']
+                        [parserName: 'PyLint', pattern: 'reports/pylint.report']
                     ],
                 ])
                 step([
                     $class: 'CoberturaPublisher',
-                    coberturaReportFile: '$REPORTS/coverage.xml'
+                    coberturaReportFile: 'reports/coverage.xml'
                 ])
             }
         }
