@@ -19,19 +19,5 @@ A `Jenkinsfile` is included that does the following:
 
 Simply create a new Jenkins pipeline project and point to this repo for it to run!
 
-# Freestyle Project
-Setup the usual stuff to point to this Git repo and enable parameters. Then add the following:
-
-### Build
-- Execute shell: `./build.sh`
-
-### Post-build Actions
-- Scan for compiler warnings
-  - Scan workspace files
-    - File pattern: `reports/pylint.report`
-    - Parser: PyLint
-- Publish Cobertura Coverage Report
-  - Cobertura xml report pattern: `reports/coverage.xml`
-  
 # TODO
 - Build and deploy to an Openshift project/application
