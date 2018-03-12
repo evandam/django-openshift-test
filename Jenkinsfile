@@ -62,6 +62,7 @@ pipeline {
         }
         stage('Publish') {
             steps {
+                sh 'rm -rf venv reports'
                 zip zipFile: 'app.zip', archive: true
             }
         }
