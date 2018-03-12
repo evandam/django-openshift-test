@@ -62,7 +62,6 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                sh 'rm -rf venv reports'
                 zip zipFile: 'app.zip', archive: true
             }
         }
@@ -70,6 +69,9 @@ pipeline {
     post {
         always {
             deleteDir()
+        }
+        success {
+            archiveArtifacts exclude: '*.pyc __pycache__ venv reports'
         }
     }
 }
