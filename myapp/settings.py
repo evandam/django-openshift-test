@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+STATIC_ROOT = '/usr/local/static'
+MEDIA_ROOT = '/usr/local/media'
+
 
 # Application definition
 
